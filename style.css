@@ -1,0 +1,146 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --slide-spacer: 40px;
+  --slide-width: clamp(200px, 25vw, 400px);
+  --slide-count: 9;
+  --time-per-slide: 8s;
+}
+
+
+
+.slider-group {
+  --slider-bg: trsparent;
+  background: var(--slider-bg);
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  
+}
+.slider-group:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(20px, 10%, 300px);
+  height: 100%;
+  background: linear-gradient(to right, var(--slider-bg) 5%, rgba(179, 213, 230, 0));
+  z-index: 8;
+  /* From https://css.glass */
+
+  
+}
+.slider-group:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: clamp(20px, 10%, 200px);
+  height: 100%;
+  background: linear-gradient(to left, var(--slider-bg) 5%, rgba(179, 213, 230, 0));
+  z-index: 8;
+  /* From https://css.glass */
+}
+
+.slider {
+  overflow: hidden;
+  overflow: clip;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.slide-track {
+  display: flex;
+  transform: translateX(0);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  --slide-total-width: calc(var(--slide-width) + var(--slide-spacer));
+  --slide-duration: calc(var(--slide-count) * var(--time-per-slide, 10s));
+}
+
+@-webkit-keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(var(--slide-total-width) * -9));
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(var(--slide-total-width) * -9));
+  }
+}
+@-webkit-keyframes scroll-reverse {
+  0% {
+    transform: translateX(calc(var(--slide-total-width) * -9));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes scroll-reverse {
+  0% {
+    transform: translateX(calc(var(--slide-total-width) * -9));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.slide-track {
+  -webkit-animation: scroll var(--slide-duration, 25s) linear infinite both;
+          animation: scroll var(--slide-duration, 25s) linear infinite both;
+}
+
+.reverse .slide-track {
+  -webkit-animation: scroll-reverse var(--slide-duration, 25s) linear infinite both;
+          animation: scroll-reverse var(--slide-duration, 25s) linear infinite both;
+}
+
+.slide-track:hover, .slider-group.paused .slide-track {
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+
+.slide {
+  aspect-ratio: 2/1;
+  background-color: white;
+  border-radius: 18px;
+  margin-right: var(--slide-spacer);
+  min-height: 150px;
+  min-width: var(--slide-width);
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  justify-content: center;
+  position: relative;
+  transform: scale(0.99);
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.5s;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* Subtle glow effect */
+height: 250px;
+}
+
+.slide:hover {
+  transform: scale(1.09);
+}
+
+/* demo cat pics */
+
+
+.btn-wrapper {
+  margin: auto;
+}
+

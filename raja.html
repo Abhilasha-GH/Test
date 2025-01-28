@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draggable & Looping Carousel</title>
+  <style>
+    /* Reset styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slider-group {
+      width: 90%;
+      max-width: 1200px;
+      position: relative;
+    }
+
+    .slider {
+      overflow: hidden;
+      position: relative;
+      padding: 20px 0;
+      cursor: grab;
+    }
+
+    .slider:active {
+      cursor: grabbing;
+    }
+
+    .slide-track {
+      display: flex;
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+    }
+
+    .slide {
+      flex: 0 0 250px;
+      margin: 0 15px;
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .slide:hover {
+      transform: scale(1.1);
+    }
+
+    .slide img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .slide h3 {
+      padding: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .hover-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .slide:hover .hover-content {
+      transform: translateY(0);
+    }
+
+    .hover-content p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .hover-content .more-info-btn {
+      margin-top: 8px;
+      padding: 5px 10px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .hover-content .more-info-btn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="slider-group">
+    <div class="slider" id="slider">
+      <div class="slide-track">
+        <!-- Repeat slides for infinite scrolling -->
+        <div class="slide">
+          <img src="AXF6D2202140G7AMXB4.jpg" alt="Trainborne Radio Modem">
+          <h3>Trainborne Radio Modem</h3>
+          <div class="hover-content">
+            <p>Details about Trainborne Radio Modem</p>
+            <button class="more-info-btn" onclick="alert('More info about Trainborne Radio Modem')">More Info</button>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="https://doubles.ru/pictures/backgroundtransparent/width246/height186/cat_id1355.jpg" alt="Trainborne LTE Router">
+          <h3>Trainborne LTE Router</h3>
+          <div class="hover-content">
+            <p>Details about Trainborne LTE Router</p>
+            <button class="more-info-btn" onclick="alert('More info about Trainborne LTE Router')">More Info</button>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="https://itscan.ru/sites/default/files/rfid.jpg" alt="RFID Tags">
+          <h3>RFID Tags</h3>
+          <div class="hover-content">
+            <p>Details about RFID Tags</p>
+            <button class="more-info-btn" onclick="alert('More info about RFID Tags')">More Info</button>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="https://lios.lunainc.com/wp-content/uploads/sites/2/2017/03/lhd-perpektive-ms-web.jpg" alt="Linear Heat Detectors">
+          <h3>Linear Heat Detectors</h3>
+          <div class="hover-content">
+            <p>Details about Linear Heat Detectors</p>
+            <button class="more-info-btn" onclick="alert('More info about Linear Heat Detectors')">More Info</button>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="https://nevateka.ru/upload/iblock/162/ocg3lqyen6du4r8pepcyiwj0j5lmdddf/VLF-250-04-2.jpg" alt="Aspirating Type Detectors">
+          <h3>Aspirating Type Detectors</h3>
+          <div class="hover-content">
+            <p>Details about Aspirating Type Detectors</p>
+            <button class="more-info-btn" onclick="alert('More info about Aspirating Type Detectors')">More Info</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById("slider");
+    const slideTrack = slider.querySelector(".slide-track");
+    const slides = Array.from(slideTrack.children);
+
+    let currentIndex = 0;
+    let isDragging = false;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let autoplayInterval;
+
+    // Autoplay functionality
+    const startAutoplay = () => {
+      autoplayInterval = setInterval(() => {
+        currentIndex++;
+        updateSliderPosition();
+      }, 3000);
+    };
+
+    const stopAutoplay = () => clearInterval(autoplayInterval);
+
+    const updateSliderPosition = () => {
+      if (currentIndex >= slides.length) currentIndex = 0;
+      currentTranslate = -currentIndex * (slides[0].offsetWidth + 30); // Slide width + margin
+      slideTrack.style.transform = `translateX(${currentTranslate}px)`;
+    };
+
+    // Start dragging
+    slider.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      stopAutoplay();
+      startX = e.clientX;
+      slider.style.cursor = "grabbing";
+    });
+
+    // Dragging
+    slider.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      currentTranslate = prevTranslate + dx;
+      slideTrack.style.transform = `translateX(${currentTranslate}px)`;
+    });
+
+    // Stop dragging
+    slider.addEventListener("mouseup", () => {
+      isDragging = false;
+      prevTranslate = currentTranslate;
+      slider.style.cursor = "grab";
+      startAutoplay();
+    });
+
+    // Reset dragging state on mouse leave
+    slider.addEventListener("mouseleave", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      prevTranslate = currentTranslate;
+      slider.style.cursor = "grab";
+      startAutoplay();
+    });
+
+    // Start the autoplay
+    startAutoplay();
+  </script>
+</body>
+</html>
